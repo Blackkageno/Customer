@@ -240,6 +240,22 @@ function openWhatsApp(){
 
 /* INIT */
 renderServices();
+
+if (typeof db !== 'undefined' && db.ref) {
+    db.ref('portalData').on('value', (snapshot) => {
+        const data = snapshot.val();
+       if (data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    
+    // Safely re-render sections if their functions exist
+    if (typeof renderServices === 'function') renderServices();
+    if (typeof renderPeople === 'function') {
+        renderPeople('staff', 'staffGrid', false);
+        renderPeople('executives', 'execGrid', true);
+    }
+    if (typeof renderProjects === 'function') renderProjects();
+}    });
+}
 // Check if returning from a sub-page with a target section
 (function(){
   const params = new URLSearchParams(window.location.search);
